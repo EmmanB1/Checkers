@@ -1,0 +1,2048 @@
+import React, { Component } from 'react';
+import { AppRegistry, Text, View, StyleSheet, ImageBackground, TouchableHighlight, Dimensions, TextInput, Image, TouchableOpacity, Button } from 'react-native';
+import { Audio } from "expo";
+let deviceHeight = Dimensions.get('window').height;
+let deviceWidth = Dimensions.get('window').width;
+import {Constants} from 'expo';
+
+
+export default class App extends Component{
+    state = {
+            boardTilesRow1: [
+                {num: 0,color: '', isFill: true},{num: 1, color: '', isFill: false},{num: 0,color: '', isFill: false},{num: 1,color: '', isFill: true},{num: 0,color: '', isFill: false},{num: 1,color: '', isFill: true},{num: 0,color: '', isFill: false},{num: 1,color: '', isFill: true}
+            ],
+    
+            boardTilesRow2: [
+                {num: 1, color: '', isFill: true}, {num: 0,color: '', isFill: false}, {num: 1,color: '', isFill: false} ,{num: 0,color: '', isFill: false},{num: 1,color: '', isFill: false}, {num: 0,color: '', isFill: false}, {num: 1,color: '', isFill: false}, {num: 0,color: '', isFill: false}
+            ],
+    
+            boardTilesRow3: [
+                {num: 0, color: '', isFill: false},{num: 1, color: '', isFill: false},{num: 0, color: '', isFill: false},{num: 1, color: ''},{num: 0, color: '', isFill: false},{num: 1, color: '', isFill: false},{num: 0, color: '', isFill: false},{num: 1, color: '', isFill: false}
+            ],
+    
+            boardTilesRow4: [
+                {num: 1, color: '', isFill: false}, {num: 0,color: '', isFill: false}, {num: 1,color: '', isFill: false} ,{num: 0,color: '', isFill: false},{num: 1,color: '', isFill: false}, {num: 0,color: '',isFill: false}, {num: 1,color: '', isFill: false}, {num: 0,color: '', isFill: false}
+            ],
+    
+            boardTilesRow5: [
+                {num: 0, color: '', isFill: false},{num: 1, color: '', isFill: false},{num: 0, color: '', isFill: false},{num: 1, color: ''},{num: 0, color: '', isFill: false},{num: 1, color: '', isFill: false},{num: 0, color: '', isFill: false},{num: 1, color: '', isFill: false}
+            ],
+    
+            boardTilesRow6: [
+                {num: 1, color: '', isFill: false}, {num: 0,color: '', isFill: false}, {num: 1,color: '', isFill: false} ,{num: 0,color: '', isFill: false},{num: 1,color: '', isFill: false}, {num: 0,color: '',isFill: false}, {num: 1,color: '', isFill: false}, {num: 0,color: '', isFill: false}
+            ],
+    
+            boardTilesRow7: [
+                {num: 0, color: '', isFill: false},{num: 1, color: '', isFill: false},{num: 0, color: '', isFill: false},{num: 1, color: ''},{num: 0, color: '', isFill: false},{num: 1, color: '', isFill: false},{num: 0, color: '', isFill: false},{num: 1, color: '', isFill: false}
+            ],
+    
+            boardTilesRow8: [
+                {num: 1, color: '', isFill: false}, {num: 0,color: '', isFill: false}, {num: 1,color: '', isFill: false} ,{num: 0,color: '', isFill: false},{num: 1,color: '', isFill: false}, {num: 0,color: '',isFill: false}, {num: 1,color: '', isFill: false}, {num: 0,color: '', isFill: false}
+            ],
+            
+            
+            isKing1: false,
+            isSelected1: false,
+            
+            selectRow: 0,
+            selectCol: 0,
+            currRow: 0,
+            currCol: 0,
+            prevCurrRow: -1,
+            prevCurrCol: -1,
+            currStatus: false,
+            selStatus: false,
+            
+            counterArray: [
+              	{
+                	wins: 0,
+                  losses: 0,
+                },
+                {
+                	wins: 0,
+                  losses: 0,
+                }
+            ],
+    
+            playerArray: [
+              	{
+                    playerName: 'Player One',
+                    numPiecesCaptured: 0,
+                    numKings: 0,
+                },
+                {
+                	playerName: 'Player Two',
+                    numPiecesCaptured: 0,
+                    numKings: 0,
+                }
+            ],
+            play1Checkers: [{horLoc: 0, widLoc: 0,}],
+            play2Checkers: [{horLoc: 0, widLoc: 0,}],
+            pageStore: ['block', 'none', 'none', 'none', 'none','none'],
+            inputValue: 'You can change me!',
+            
+            turnCounter: 1,
+            colorPlayer1: '#87ceeb',
+            colorPlayer2: '#ff0040',
+            isPressed: false,
+            numPressed: 0,
+            highlightArrayB: [],
+            highlightArrayR: [],
+            
+            numberArrayColumn: [{num: ''},{num: 1},{num: 2},{num: 3},{num: 4},{num: 5},{num: 6},{num: 7},{num: 8}],
+            numberArrayRow: [{num: 1},{num: 2},{num: 3},{num: 4},{num: 5},{num: 6},{num: 7},{num: 8}],
+    }
+    /*
+    *   Source: https://reactjs.org/docs/components-and-props.html
+    *   Author: React Native
+    */
+    /*
+        Inputs the values and images of the checkers 
+        @param - row - where the chessker piece is located on the row on the checkerboard
+       
+                column - the column the chessker piece is located on the column on the checkerboard
+       
+                status - whether or not the chessker piece is a King
+    */
+    CheckersPieces(row, column, status){
+        if(!status){
+            return(
+                <View style = {styles.pieces}>
+                    
+                    <TouchableOpacity
+                        onPress ={() => this.getMovement1(row,column,status)}
+                        
+                    >
+                        <Image
+                            source={{ uri: 'https://codehs.com/uploads/7afec6c6c1e64dc1f2062a1e6f8fbbf9'}}
+                            style={styles.pieces}
+                        ></Image>
+                    </TouchableOpacity>
+                     
+                </View>
+                
+            );
+        }
+        else{
+            return(
+                <View style = {styles.pieces}>
+                    
+                    <TouchableOpacity
+                        onPress ={() => this.getMovement1(row,column,status)}
+                        
+                    >
+                        <Image
+                            source={{ uri: 'https://codehs.com/uploads/66bba1a8fc3c8394ca9fe3abc6e96067'}}
+                            style={styles.pieces}
+                        ></Image>
+                    </TouchableOpacity>
+                     
+                
+                </View>
+                
+            );
+        }
+    }
+    /*
+    *   Source: https://reactjs.org/docs/components-and-props.html
+    *   Author: React Native
+    */
+    /*
+        Inputs the values and images of the chessker @param - row - where the chessker piece is located on the row on the checkerboard
+       
+                column - the column the chessker piece is located on the column on the checkerboard
+       
+                status - whether or not the chessker piece is a King
+    */
+    CheckersPieces2(row,column,status){
+        if(!status){
+            return(
+                <View style = {styles.pieces}>
+                
+                    <TouchableOpacity
+                        onPress ={() => this.getMovement2(row, column, status)}
+                    >
+                        <Image
+                            source={{ uri: 'https://codehs.com/uploads/ddc3b73cf7744f3090da371d2a9ce035'  }}
+                            style={styles.pieces}
+                        ></Image>
+                     
+                    </TouchableOpacity>
+                </View>
+            
+            );
+        }
+        
+        else {
+            return(
+                <View style = {styles.pieces}>
+                
+                    <TouchableOpacity
+                        onPress ={() => this.getMovement2(row, column, status)}
+                    >
+                        <Image
+                            source={{ uri: 'https://codehs.com/uploads/efd6d9071246880701d3a9add850b2aa'  }}
+                            style={styles.pieces}
+                        ></Image>
+                     
+                    </TouchableOpacity>
+                </View>  
+            );
+            
+        }
+        
+    }
+    
+    /*
+        Receives the original location of the tile for the player 1 chessker pieces
+        @param - row - where the chessker piece is located on the row on the checkerboard
+       
+                column - the column the chessker piece is located on the column on the checkerboard
+       
+                status - whether or not the chessker piece is a King
+    */
+    getMovement1 = (row, column, status) =>{
+        var newObj, prevObj;
+        var objArray = [];
+        if(this.state.turnCounter % 2 == 0){
+            alert('cannot move')
+        }
+        else{
+            this.state.currRow = row;
+            this.state.currCol = column;
+            this.state.currStatus = status;
+            this.state.isPressed = true;
+                newObj = {
+                    num: 1,
+                    color: 'Black',
+                    fill: true,
+                    row: Number(this.state.currRow),
+                    column: Number(this.state.currCol),
+                    chColor: 'blue',
+                    isKing: this.state.currStatus,
+                }
+                
+                
+                if(!newObj.isKing){
+                    if(this.state.highlightArrayB.length > 0){
+                        for(let i = 0; i < this.state.highlightArrayB.length; i++){
+                            this.state.highlightArrayB[i].color = 'Black';
+                            this.highlightBoard(this.state.highlightArrayB[i]);
+                        }
+                    }
+                
+                    objArray = this.checkIfHighlightB(newObj,'orange');
+                    
+                    if(objArray.length > 0){
+                        for(let i = 0; i < objArray.length; i++){
+                            this.highlightBoard(objArray[i]);
+                            this.state.highlightArrayB.push(objArray[i]);
+                        }
+                    }
+                }
+                
+                else{
+                    if(this.state.highlightArrayB.length > 0){
+                        for(let i = 0; i < this.state.highlightArrayB.length; i++){
+                            this.state.highlightArrayB[i].color = 'Black';
+                            this.highlightBoard(this.state.highlightArrayB[i]);
+                        }
+                    }
+                    
+                    objArray = this.checkIfHighlightB(newObj,'orange');
+                    
+                    
+                    
+                    if(objArray.length > 0){
+                        for(let i = 0; i < objArray.length; i++){
+                            this.highlightBoard(objArray[i]);
+                            this.state.highlightArrayB.push(objArray[i]);
+                        }
+                    }
+                }
+                
+                alert('You pressed the Chessker piece on row '+ row +' column '+ column)
+            }
+    };
+    /*
+        Receives the original location of the tile for the player 2 chessker pieces
+        @param - row - where the chessker piece is located on the row on the checkerboard
+       
+                column - the column the chessker piece is located on the column on the checkerboard
+       
+                status - whether or not the chessker piece is a King
+    */
+    getMovement2 = (row, column, status) => {
+        var newObj, prevObj;
+        var objArray = [];
+        if(this.state.turnCounter % 2 == 0){
+            
+            this.state.currRow = row;
+            this.state.currCol = column;
+            this.state.currStatus = status;
+            this.state.isPressed = true;
+            newObj = {
+                    num: 1,
+                    color: 'Black',
+                    fill: true,
+                    row: Number(this.state.currRow),
+                    column: Number(this.state.currCol),
+                    chColor: 'red',
+                    isKing: this.state.currStatus,
+                }
+                if(this.state.highlightArrayR.length > 0){
+                    for(let i = 0; i < this.state.highlightArrayR.length; i++){
+                        this.state.highlightArrayR[i].color = 'Black';
+                        this.highlightBoard(this.state.highlightArrayR[i]);
+                    }
+                }
+                objArray = this.checkIfHighlightR(newObj,'orange');
+                if(objArray.length > 0){
+                    for(let i = 0; i < objArray.length; i++){
+                        this.highlightBoard(objArray[i]);
+                        this.state.highlightArrayR.push(objArray[i]);
+                    }
+                }
+            
+            alert('You pressed the Chessker piece on row ' + row + ' column ' + column);
+        }
+        else{
+            alert('cannot move')
+        }
+    
+    }
+    
+    /*
+        Creates a Highlight of the selected tile the piece is on
+        
+        @Param oldObj -> The old object
+    */
+    highlightBoard = (oldObj) => {
+        for(let i = 0; i < 8; i++){
+            const j = oldObj.column-1;
+            
+            if(oldObj.row-1 == 0){
+                if(j == i){
+                    this.state.boardTilesRow1[j] = oldObj;
+                }
+            }
+            else if(oldObj.row-1 == 1){
+                if(j == i){
+                    this.state.boardTilesRow2[j] = oldObj;
+                }
+            }
+            else if(oldObj.row-1 == 2){
+                if(j == i){
+                    this.state.boardTilesRow3[j] = oldObj;
+                }
+            }
+            else if(oldObj.row-1 == 3){
+                if(j == i){
+                    this.state.boardTilesRow4[j] = oldObj;
+                }
+            }
+            else if(oldObj.row-1 == 4){
+                if(j == i){
+                    this.state.boardTilesRow5[j] = oldObj;
+                }
+            }
+            else if(oldObj.row-1 == 5){
+                if(j == i){
+                    this.state.boardTilesRow6[j] = oldObj;
+                }
+            }
+            else if(oldObj.row-1 == 6){
+                if(j == i){
+                    this.state.boardTilesRow7[j] = oldObj;
+                }
+            }
+            else if(oldObj.row-1 == 7){
+                if(j == i){
+                    this.state.boardTilesRow8[j] = oldObj;
+                }
+            }
+        }
+        //this._handlePlaySoundAsync();
+        this.fillPieces(oldObj);
+        //'refreshes' the page
+        this.displayPage(1);
+    }
+    
+    
+    /*
+        This function gets a specific tile and its data from the checkerboard and returns it
+    
+        @param - row - the row on the checkerboard
+                column - the column on the checkerboard
+        @return - the tile and its data
+    */
+    receiveBoard = (row, column) => {
+        for(let i = 0; i < 8; i++){
+            const j = column-1;
+            
+            if(row-1 == 0){
+                if(j == i){
+                    return this.state.boardTilesRow1[j];
+                }
+            }
+            else if(row-1 == 1){
+                if(j == i){
+                    return this.state.boardTilesRow2[j];
+                }
+            }
+            else if(row-1 == 2){
+                if(j == i){
+                    return this.state.boardTilesRow3[j];
+                }
+            }
+            else if(row-1 == 3){
+                if(j == i){
+                    return this.state.boardTilesRow4[j];
+                }
+            }
+            else if(row-1 == 4){
+                if(j == i){
+                    return this.state.boardTilesRow5[j];
+                }
+            }
+            else if(row-1 == 5){
+                if(j == i){
+                    return this.state.boardTilesRow6[j];
+                }
+            }
+            else if(row-1 == 6){
+                if(j == i){
+                    return this.state.boardTilesRow7[j];
+                }
+            }
+            else if(row-1 == 7){
+                if(j == i){
+                    return this.state.boardTilesRow8[j];
+                }
+            }
+        }
+    }
+    
+    /*
+        This function checks if the tile the piece will be moved onto is already occupied; checkIfHighlight() 
+        will return true if the tile is either unoccupied OR the piece occupying the tile is of the opposite color; false if otherwise.
+    
+        @param - selBoardPiece - the chessker piece that's being compared
+        @return - whether a chessker should be highlighted at the tile or not
+    */
+    checkIfHighlightB = (selBoardTile, newColor) => {
+        
+        var objArray = [];
+        var newObj, newObj1, newObj2, newObj3;
+        var returnArray = [];
+        
+        //King Status False
+        if(!selBoardTile.isKing){
+            // Creates the two tiles that are going to be the desired color
+            if(Number(this.state.currCol) +1 > 0 && Number(this.state.currCol) + 1 < 9 ){
+                if(Number(this.state.currRow) + 1 > 0 && Number(this.state.currRow) + 1 < 9){
+                    newObj = this.receiveBoard(Number(this.state.currRow+1),Number(this.state.currCol+1));
+                    
+                    objArray.push(newObj);
+                }
+            }
+            if(Number(this.state.currCol)-1 > 0 && Number(this.state.currCol)-1 < 9){
+                if(Number(this.state.currRow) + 1 > 0 && Number(this.state.currRow) + 1 < 9){
+                    newObj1 = this.receiveBoard(Number(this.state.currRow+1),Number(this.state.currCol-1));
+                    
+                    objArray.push(newObj1);
+                }
+            }
+             
+                
+                
+            if(objArray.length > 0){
+                for(let i = 0; i < objArray.length; i++){
+                    if(selBoardTile.fill == true && selBoardTile.chColor != objArray[i].chColor){
+                        //Return at the end of the iteration bc the function will close
+                        if(objArray[i].chColor != 'blue'){
+                            objArray[i].color = newColor;
+                        }
+                        returnArray.push(objArray[i]);
+                            
+                    }
+                    else if(selBoardTile.fill == false && selBoardTile.color == 'Black'){
+                        if(objArray[i].chColor != 'blue'){
+                            objArray[i].color = newColor;
+                        }
+                        returnArray.push(objArray[i]);
+                    }
+                }
+            }
+                
+                
+        }
+        
+        
+        //King Status True
+        else{
+            //Create four tiles that are going to be the desired color
+            //Bottom Right
+            if(Number(this.state.currCol) +1 > 0 && Number(this.state.currCol) + 1 < 9){
+                    if(Number(this.state.currRow) + 1 > 0 && Number(this.state.currRow) + 1 < 9){
+                        newObj = this.receiveBoard(Number(this.state.currRow+1),Number(this.state.currCol+1));
+                        
+                        objArray.push(newObj);
+                    }
+            }
+            
+                //Bottom Left
+            if(Number(this.state.currCol)-1 > 0 && Number(this.state.currCol)-1 < 9){
+                    if(Number(this.state.currRow) + 1 > 0 && Number(this.state.currRow) + 1 < 9){
+                        newObj1 = this.receiveBoard(Number(this.state.currRow+1),Number(this.state.currCol-1));
+                        
+                        objArray.push(newObj1);
+                    }
+            }
+                //Top Left
+            if(Number(this.state.currCol) +1 > 0 && Number(this.state.currCol) + 1 < 9){
+                if(Number(this.state.currRow) - 1 > 0 && Number(this.state.currRow) - 1 < 9){
+                    newObj2 = this.receiveBoard(Number(this.state.currRow-1),Number(this.state.currCol+1));
+                    
+                    objArray.push(newObj2);
+                }
+            }
+                //Top Right
+            if(Number(this.state.currCol)-1 > 0 && Number(this.state.currCol)-1 < 9){
+                if(Number(this.state.currRow) - 1 > 0 && Number(this.state.currRow) - 1 < 9){
+                    newObj3 = this.receiveBoard(Number(this.state.currRow-1),Number(this.state.currCol-1));
+                    
+                    objArray.push(newObj3);
+                }
+            }
+            
+            if(objArray.length > 0){
+                    for(let i = 0; i < objArray.length; i++){
+                        if(objArray[i].chColor != 'blue'){
+                            objArray[i].color = newColor;
+                        }
+                        
+                        if(selBoardTile.fill == true && selBoardTile.chColor != objArray[i].chColor){
+                            //Return at the end of the iteration bc the function will close
+                            returnArray.push(objArray[i]);
+                            
+                        }
+                        else if(selBoardTile.fill == false && selBoardTile.color == 'Black'){
+                            returnArray.push(objArray[i]);
+                        }
+                    }
+                }
+            
+        }
+        
+        return returnArray;
+    };
+    
+    /*
+        This function checks if the tile the piece will be moved onto is already occupied; checkIfHighlight() 
+        will return true if the tile is either unoccupied OR the piece occupying the tile is of the opposite color; false if otherwise.
+    
+        @param - selBoardPiece - the chessker piece that's being compared
+        @return - whether a chessker should be highlighted at the tile or not
+    */
+    checkIfHighlightR = (selBoardTile, newColor) => {
+        
+        var objArray = [];
+        var newObj, newObj1, newObj2, newObj3;
+        var returnArray = [];
+        if(!selBoardTile.isKing){
+            
+            // Creates the two tiles that are going to be the desired color
+            if(Number(this.state.currCol) +1 > 0 && Number(this.state.currCol) + 1 < 9){
+                if(Number(this.state.currRow) + 1 > 0 && Number(this.state.currRow) - 1 < 8){
+                    newObj = this.receiveBoard(Number(this.state.currRow-1),Number(this.state.currCol+1));
+                    objArray.push(newObj);
+                }
+            }
+            if(Number(this.state.currCol)-1 > 0 && Number(this.state.currCol)-1 < 9){
+                if(Number(this.state.currRow) + 1 > 0 && Number(this.state.currRow) - 1 < 8){
+                    newObj1 = this.receiveBoard(Number(this.state.currRow-1),Number(this.state.currCol-1));
+                    objArray.push(newObj1);
+                }
+            }
+            
+            
+            if(objArray.length > 0){
+                for(let i = 0; i < objArray.length; i++){
+                    if(objArray[i].chColor != 'red'){
+                        objArray[i].color = newColor;
+                    }
+                    
+                    if(selBoardTile.fill == true && selBoardTile.chColor != objArray[i].chColor){
+                        //Return at the end of the iteration bc the function will close
+                        returnArray.push(objArray[i]);
+                        
+                    }
+                    else if(selBoardTile.fill == false && selBoardTile.color == 'Black'){
+                        returnArray.push(objArray[i]);
+                    }
+                }
+            }
+            
+            
+        }
+        
+        //King Status True
+        else{
+            //Create four tiles that are going to be the desired color
+                //Bottom Right
+            if(Number(this.state.currCol) +1 > 0 && Number(this.state.currCol) + 1 < 9){
+                    if(Number(this.state.currRow) + 1 > 0 && Number(this.state.currRow) + 1 < 9){
+                        newObj = this.receiveBoard(Number(this.state.currRow+1),Number(this.state.currCol+1));
+                        
+                        objArray.push(newObj);
+                    }
+            }
+            
+                //Bottom Left
+            if(Number(this.state.currCol)-1 > 0 && Number(this.state.currCol)-1 < 9){
+                    if(Number(this.state.currRow) + 1 > 0 && Number(this.state.currRow) + 1 < 9){
+                        newObj1 = this.receiveBoard(Number(this.state.currRow+1),Number(this.state.currCol-1));
+                        
+                        objArray.push(newObj1);
+                    }
+            }
+                //Top Left
+            if(Number(this.state.currCol) +1 > 0 && Number(this.state.currCol) + 1 < 9){
+                if(Number(this.state.currRow) - 1 > 0 && Number(this.state.currRow) - 1 < 9){
+                    newObj2 = this.receiveBoard(Number(this.state.currRow-1),Number(this.state.currCol+1));
+                    
+                    objArray.push(newObj2);
+                }
+            }
+                //Top Right
+            if(Number(this.state.currCol)-1 > 0 && Number(this.state.currCol)-1 < 9){
+                if(Number(this.state.currRow) - 1 > 0 && Number(this.state.currRow) - 1 < 9){
+                    newObj3 = this.receiveBoard(Number(this.state.currRow-1),Number(this.state.currCol-1));
+                    
+                    objArray.push(newObj3);
+                }
+            }
+            
+            if(objArray.length > 0){
+                    for(let i = 0; i < objArray.length; i++){
+                        
+                        if(objArray[i].chColor != 'red'){
+                            objArray[i].color = newColor;
+                        }
+                        
+                        if(selBoardTile.fill == true && selBoardTile.chColor != objArray[i].chColor){
+                            //Return at the end of the iteration bc the function will close
+                            returnArray.push(objArray[i]);
+                            
+                        }
+                        else if(selBoardTile.fill == false && selBoardTile.color == 'Black'){
+                            returnArray.push(objArray[i]);
+                        }
+                    }
+                }
+            
+        }
+        
+        return returnArray;
+    };
+    
+    /*
+        This function checks to see which player can move based on what turn it is.
+    */
+    movePiece = () =>{
+        if(this.state.isPressed == true){
+            if(this.state.turnCounter % 2 != 0){
+                this.movePieces1();
+            }
+            if(this.state.turnCounter % 2 == 0){
+                this.movePieces2();
+            }
+        }
+        else{
+            alert('Please select a piece')
+        }
+    }
+    
+    /*
+        This function indicates if the chessker should be moved
+        @param - boardTile - the board tile that the chessker is on
+    */
+    movePieces1 = () =>{
+            if(this.state.turnCounter % 2 != 0){
+                
+                var newObj, prevObj;
+                
+                prevObj = {
+                    num: 1,
+                    color: 'Black',
+                    fill: false,
+                    row: Number(this.state.currRow),
+                    column: Number(this.state.currCol),
+                    chColor: '',
+                    isKing: false,
+                }
+                
+                newObj = {
+                    num: 1,
+                    color: 'Black',
+                    fill: true,
+                    row: Number(this.state.selectRow),
+                    column: Number(this.state.selectCol),
+                    chColor: 'blue',
+                    isKing: this.state.currStatus,
+                }
+                
+                this.state.selectRow = 0;
+                this.state.selectCol = 0;
+                
+                //changes the tiles highlighted back to black when turn ends
+                
+                if(this.state.highlightArrayB.length > 0){
+                    for(let i = 0; i < this.state.highlightArrayB.length; i++){
+                        this.state.highlightArrayB[i].color = 'Black';
+                        this.highlightBoard(this.state.highlightArrayB[i]);
+                    }
+                    this.state.highlightArrayB = [];
+                }
+                
+                //Is the piece a king?
+                //No? then have regular behavior
+                    if(!newObj.isKing){
+                        if(newObj.row > 0 && newObj.row < 9){
+                            if(prevObj.column - 1 == newObj.column || prevObj.column + 1 == newObj.column){
+                                newObj.isKing = this.convertToBlueKing(newObj);
+                                this.updateBoard(prevObj, newObj);        
+                            }
+                            else{
+                                alert('error, column is out of reach')
+                            }
+                        }
+                        
+                        
+                        else{
+                            alert('Error, row is out of bounds')
+                        }
+                    }
+                    
+                    //Is the piece a king?
+                    //Yes? then have King Piece behavior
+                    else{
+                        if(newObj.row > 0 && newObj.row < 9){
+                            if(prevObj.row + 1 == newObj.row || prevObj.row - 1 == newObj.row){
+                                if(prevObj.column - 1 == newObj.column || prevObj.column + 1 == newObj.column){
+                                    this.updateBoard(prevObj, newObj);
+                                    
+                                }
+                                
+                                else{
+                                    alert('error, column is out of reach')
+                                }
+                            }
+                            
+                            else{
+                                alert('error, row is out of reach')
+                            }
+                            
+                        }
+                        else{
+                            alert('error, row out of bounds')
+                        }
+                }    
+                
+                
+            }
+            else{
+                alert('cannot move')
+            }
+            
+    };
+    
+    /*
+        This function indicates if the chessker should be moved
+        
+    */
+    movePieces2 = () =>{
+            if(this.state.turnCounter % 2 == 0){
+                var newObj, oldObj;
+                
+                oldObj = {
+                    num: 1,
+                    color: 'Black',
+                    fill: false,
+                    row: Number(this.state.currRow),
+                    column: Number(this.state.currCol),
+                    chColor: ' ',
+                    isKing: false,
+                }
+                newObj = {
+                    num: 1,
+                    color: 'Black',
+                    fill: true,
+                    row: Number(this.state.selectRow),
+                    column: Number(this.state.selectCol),
+                    chColor: 'red',
+                    isKing: this.state.currStatus,
+                }
+                
+                this.state.selectRow = 0;
+                this.state.selectCol = 0;
+                
+                //changes the tiles highlighted back to black when turn ends
+                if(this.state.highlightArrayR.length > 0){
+                    for(let i = 0; i < this.state.highlightArrayR.length; i++){
+                        this.state.highlightArrayR[i].color = 'Black';
+                        this.highlightBoard(this.state.highlightArrayR[i]);
+                        
+                    }
+                    this.state.highlightArrayR = [];
+                }
+                
+                //Is the piece a king?
+                //No? then have regular behavior
+                if(!newObj.isKing){
+                    if(newObj.row > 0 && newObj.row < 9 || newObj.column > 0 && newObj.column < 9){
+                        if(oldObj.column + 1 == newObj.column || oldObj.column - 1 == newObj.column){
+                            newObj.isKing = this.convertToRedKing(newObj);
+                            
+                            this.updateBoard(oldObj, newObj);    
+                        }
+                        else{
+                            alert('error, column is out of reach')
+                        }
+                    }                
+                    else{
+                        alert('error, row out of bounds')
+                    }
+                }
+                //Is the piece a king?
+                //Yes? then have King Piece behavior
+                else{
+                    if(newObj.row > 0 && newObj.row < 9 || newObj.column > 0 && newObj.column < 9){
+                        if(oldObj.row + 1 == newObj.row || oldObj.row - 1 == newObj.row){
+                            if(oldObj.column - 1 == newObj.column || oldObj.column + 1 == newObj.column){
+                                this.updateBoard(oldObj, newObj);        
+                            }
+                        }
+                        else{
+                            alert('error, column is out of reach')
+                        }
+                    }
+                    else{
+                        alert('error, row is out of reach')
+                    }
+                }   
+            }
+            
+            
+    };
+    
+    
+    /*
+        This function updates the board and its values after every move the player makes.
+        If a tile is now vacant, isFill will be updated to false, etc.
+        @param - oldObj - the tile replacing the old location of the original tile
+        @param - newObj - the new chessker piece that's being added to the selected location
+    */
+    updateBoard = (oldObj, newObj) => {
+        var cont = true;
+        
+        for(let i = 0; i < 8; i++){
+            
+            const z = newObj.column-1;
+            
+            if(newObj.row-1 == 0){
+                if(z == i){
+                    if(this.checkIfFill(this.state.boardTilesRow1[z], newObj) && this.state.boardTilesRow1[z].color == "Black"){
+                        this.state.boardTilesRow1[z] = newObj;
+                    }
+                    else{
+                        alert('You cannot move there!')
+                        cont = false;
+                    }
+                }
+            }
+            else if(newObj.row-1 == 1){
+                if(z == i){
+                    if(this.checkIfFill(this.state.boardTilesRow2[z], newObj) && this.state.boardTilesRow2[z].color == "Black"){
+                        this.state.boardTilesRow2[z] = newObj;
+                    }
+                    else{
+                        alert('You cannot move there!')
+                        cont = false;
+                    }
+                }
+            }
+            else if(newObj.row-1 == 2){
+                if(z == i){
+                    if(this.checkIfFill(this.state.boardTilesRow3[z], newObj)){
+                        this.state.boardTilesRow3[z] = newObj;
+                    }
+                    else{
+                        alert('You cannot move there!')
+                        cont = false;
+                    }
+                }
+            }
+            else if(newObj.row-1 == 3){
+                
+                if(z == i){
+                    
+                    
+                    if(this.checkIfFill(this.state.boardTilesRow4[z], newObj)){
+                        
+                        this.state.boardTilesRow4[z] = newObj;
+                    }
+                    else{
+                        alert('You cannot move there!')
+                        cont = false;
+                    }
+                }
+            }
+            else if(newObj.row-1 == 4){
+                
+                
+                if(z == i){
+                    
+                    if(this.checkIfFill(this.state.boardTilesRow5[z], newObj)){
+                        
+                        this.state.boardTilesRow5[z] = newObj;
+                    }
+                    else{
+                        alert('You cannot move there!')
+                        cont = false;
+                    }
+                }
+            }
+            else if(newObj.row-1 == 5){
+                if(z == i){
+                    if(this.checkIfFill(this.state.boardTilesRow6[z], newObj)){
+                        this.state.boardTilesRow6[z] = newObj;
+                    }
+                    else{
+                        alert('You cannot move there!')
+                        cont = false;
+                    }
+                }
+            }
+            else if(newObj.row-1 == 6){
+                if(z == i){
+                    if(this.checkIfFill(this.state.boardTilesRow7[z], newObj)){
+                        
+                        this.state.boardTilesRow7[z] = newObj;
+                    }
+                    else{
+                        alert('You cannot move there!')
+                        cont = false;
+                    }
+                }
+            }
+            else if(newObj.row-1 == 7){
+                if(z == i){
+                    if(this.checkIfFill(this.state.boardTilesRow8[z], newObj)){
+                        
+                        this.state.boardTilesRow8[z] = newObj;
+                    }
+                    else{
+                        alert('You cannot move there!')
+                        cont = false;
+                    }
+                }
+            }
+        }
+        
+        
+        if(cont){
+            for(let i = 0; i < 8; i++){
+                const j = oldObj.column-1;
+                if(oldObj.row-1 == 0){
+                    if(j == i){
+                        this.state.boardTilesRow1[j] = oldObj;
+                    }
+                }
+                else if(oldObj.row-1 == 1){
+                    if(j == i){
+                        this.state.boardTilesRow2[j] = oldObj;
+                    }
+                }
+                else if(oldObj.row-1 == 2){
+                    if(j-1 == i){
+                        this.state.boardTilesRow3[j] = oldObj;
+                    }
+                }
+                else if(oldObj.row-1 == 3){
+                    if(j == i){
+                        this.state.boardTilesRow4[j] = oldObj;
+                    }
+                }
+                else if(oldObj.row-1 == 4){
+                    if(j == i){
+                       this.state.boardTilesRow5[j] = oldObj;
+                    }
+                }
+                else if(oldObj.row-1 == 5){
+                    if(j == i){
+                        this.state.boardTilesRow6[j] = oldObj;
+                    }
+                }
+                else if(oldObj.row-1 == 6){
+                    if(j == i){
+                        this.state.boardTilesRow7[j] = oldObj;
+                    }
+                }
+                else if(oldObj.row-1 == 7){
+                    if(j == i){
+                        this.state.boardTilesRow8[j] = oldObj;
+                    }
+                }
+               
+            }
+            //this._handlePlaySoundAsync();
+            
+            this.fillPieces(oldObj);
+        
+            this.fillPieces(newObj);
+            
+            this.setState({
+                turnCounter: Number(this.state.turnCounter) + 1,
+                isPressed: false,
+                prevCurrRow: -1,
+                prevCurrCol: -1,
+            })
+            
+            
+            
+            if(Number(this.state.playerArray[0].numPiecesCaptured) >= 12 || this.state.playerArray[1].numPiecesCaptured >= 12 ){
+                this.displayPage(4);
+            }
+            
+        }
+    }
+    /*
+        This function checks if the tile the piece will be moved onto is already occupied; checkIfFill() 
+        will return true if the tile is either unoccupied OR the piece occupying the tile is of the opposite color; false if otherwise.
+    
+        @param - selBoardPiece - the chessker piece that's being compared
+        @param - otherPiece - the selected chessker piece
+        @return - whether a chessker should be filled at the tile or not
+    */
+
+    checkIfFill = (selBoardPiece, otherPiece) => {
+        
+        
+        if(selBoardPiece.fill == true && selBoardPiece.chColor == otherPiece.chColor){
+            alert('You already have your own piece there!')
+            return false;
+        }
+        
+        else if(selBoardPiece.fill == true && selBoardPiece.chColor != otherPiece.chColor){
+            
+            let newArray = [...this.state.playerArray];
+            
+            if(selBoardPiece.chColor == 'blue' && otherPiece.chColor == 'red'){
+                newArray[1].numPiecesCaptured = newArray[1].numPiecesCaptured + 1;
+                
+                this.setState({playerArray: newArray})
+                
+            }
+            else if(selBoardPiece.chColor == 'red' && otherPiece.chColor == 'blue'){
+                newArray[0].numPiecesCaptured = newArray[0].numPiecesCaptured + 1;
+                
+                this.setState({playerArray: newArray})
+                
+                
+            }
+            
+            else{
+                alert('error')
+            }
+            
+            alert('Chessker Piece captured!')
+            
+            return true;
+        }
+        else if(selBoardPiece.fill == false && (selBoardPiece.color == 'orange' || selBoardPiece.color == 'Black')){
+            return true;
+        }
+        else{
+            alert('You cannot move there!')
+            return false;
+        }
+    };
+    
+    /*
+        This function displays the chessker pieces on the board.
+        @param - boardTile - the board tile that the function is checking
+    */
+
+    fillPieces = (boardTile) => {
+        if(boardTile.fill) {
+            if(boardTile.chColor == 'blue'){
+                return (
+                    this.CheckersPieces(boardTile.row,boardTile.column,boardTile.isKing)
+                )
+            }
+            else if(boardTile.chColor == 'red'){
+                return (
+                    this.CheckersPieces2(boardTile.row,boardTile.column,boardTile.isKing)
+                )
+            }
+        }
+        
+    };
+    
+    
+    /*
+        This function converts a red chessker piece to a King.
+        @param - obj - the selected red chessker piece
+        @return - a boolean whether to convert to red king
+    */
+
+    convertToRedKing = (obj) => {
+        let newArray = [...this.state.playerArray];
+        
+        if(obj.row - 1 == 0){
+            newArray[1].numKings = newArray[1].numKings + 1;
+            this.setState({playerArray: newArray})
+            
+            return true;
+        }
+        return false;
+    };
+    
+    /*
+        This function converts a red chessker piece to a King.
+        @return - obj - selected blue chessker piece
+        @return - a boolean whether to convert to blue king
+    */
+    convertToBlueKing = (obj) => {
+        
+        let newArray = [...this.state.playerArray];
+        
+        if(obj.row + 1 == 9){
+            newArray[0].numKings = newArray[0].numKings + 1;
+            this.setState({playerArray: newArray})
+            
+            return true;
+        }
+        return false;
+    };
+    
+    /*
+        This function checks which player has captured all 12 pieces of the opposing side
+        and returns XML code that congratulates the player that won. The background color 
+        of the congratulations banner changes depending on the winning player.
+        @return - View component that displays the player name who won
+    */
+    checkWinner = () => {
+        let newArray = [...this.state.playerArray];
+        
+        if(newArray[0].numPiecesCaptured == 12){
+            return (
+                <View style= {[styles.winTextBox, {backgroundColor: this.state.colorPlayer1}]}>    
+                    <Text style={styles.winText}>
+                        Congratulations to {this.state.playerArray[0].playerName}!
+                    </Text>
+                </View>
+            );
+        }
+        else if(newArray[1].numPiecesCaptured == 12){
+            return (
+                <View style={[styles.winTextBox, {backgroundColor: this.state.colorPlayer2}]}>    
+                    <Text style={styles.winText}>
+                        Congratulations to {this.state.playerArray[1].playerName}!
+                    </Text>
+                </View>
+            );
+        }
+        
+    }
+    
+    /*
+        This function changes the background color of the turn counter depending on 
+        which player's turn it's supposed to be.
+        
+    */
+    
+    turnContainColorChange = () => {
+        if(this.state.turnCounter % 2 == 0){
+            return(
+                <View style = {[styles.turnContainer, {backgroundColor: this.state.colorPlayer2}]}>
+                    <Text style = {styles.turnText}>
+                        Round: {this.state.turnCounter}
+                    </Text>
+                </View>
+            );
+        }
+        else{
+            return(
+                <View style = {[styles.turnContainer, {backgroundColor: this.state.colorPlayer1}]}>
+                    <Text style = {styles.turnText}>
+                        Round: {this.state.turnCounter}
+                    </Text>
+                </View>
+            );
+      }
+    }
+    
+    /*
+        This function displays the current page that the user has selected.
+        
+        @param - index - the index of the pageStore array.
+    */
+    displayPage = (index) => {
+          let oldPageStore = [...this.state.pageStore];
+          
+          for(let i = 0; i < oldPageStore.length; i++) {
+                oldPageStore[i] = 'none'
+          }
+          
+          oldPageStore[index] = 'block'
+          
+          this.setState({pageStore: oldPageStore});
+    };
+    
+    /*
+        Calls the initializeGame function.
+    */
+
+    componentDidMount = () => {
+        this.initializeGame();
+    };
+    
+    /*
+        Starts the game by calling fillCheckerBoardTiles();
+    */
+
+    initializeGame = () => {
+        this.fillCheckerBoardTiles();
+    };
+    
+    /*
+        This updates the name of the players if the players wish to change 
+        them.
+    */
+
+    updateName = (index, newName) =>{
+        let newArray = [...this.state.playerArray];
+        newArray[index] = {...newArray[index], playerName: newName}
+        this.setState({playerArray: newArray});
+    };
+    
+    /*
+        This handles the change in text when the user inputs their name
+        and when the user inputs the row and column they wish to move the chessker
+        piece to.
+    */
+
+    _handleTextChange = inputValue => {
+        this.setState({ inputValue });
+    };
+    
+    /* 
+        This displays the rows of the checkerboard.
+    */
+    fillCheckerBoardTiles = () => {
+        
+        for(let i = 0; i < 8; i++){
+            let oldBoardTiles = [...this.state.boardTilesRow1];
+            var newChildArray = [];
+            var newObj;
+            
+            if(i%2 == 0 || i == 0){
+                oldBoardTiles = [{num: 0,color: '', fill: false},{num: 1, color: '', fill: true},{num: 0,color: '', fill: false},{num: 1,color: '', fill: true},{num: 0,color: '', fill: false},{num: 1,color: '', fill: true},{num: 0,color: '', fill: false},{num: 1,color: '', fill: true}];
+            }
+            
+            else {
+                oldBoardTiles = [{num: 1, color: '', fill: true}, {num: 0,color: '', fill: false}, {num: 1,color: '', fill: true} ,{num: 0,color: '', fill: false},{num: 1,color: '', fill: true}, {num: 0,color: '', fill: false}, {num: 1,color: '', fill: true}, {num: 0,color: '', fill: false}];
+            }
+            
+            for(let j = 0; j < oldBoardTiles.length; j++){
+                if(oldBoardTiles[j].num == 0){
+                    newObj = {
+                        num: 0,
+                        color: 'White',
+                        fill: false,
+                        row: i+1,
+                        column: j+1,
+                        chColor: '',
+                        isKing: false,
+                    }
+                }
+                else if (oldBoardTiles[j].num >= 1){
+                    if(i < 3){
+                        newObj = {
+                            num: 1,
+                            color: 'Black',
+                            fill: true,
+                            row: i+1,
+                            column: j+1,
+                            chColor: 'blue',
+                            isKing: false,
+                        }
+                    }
+                    else if (i > 4){ 
+                        newObj = {
+                            num: 1,
+                            color: 'Black',
+                            fill: true,
+                            row: i+1,
+                            column: j+1,
+                            chColor: 'red',
+                            isKing: false,
+                        }
+                    }
+                    else{
+                        newObj = {
+                            num: 1,
+                            color: 'Black',
+                            fill: false,
+                            row: i+1,
+                            column: j+1,
+                            chColor: ' ',
+                            isKing: false,
+                        }
+                    }
+                }
+                newChildArray.push(newObj);
+            }
+            if(i == 0){
+                this.setState({boardTilesRow1: newChildArray});
+            }
+            
+            else if(i == 1){
+                this.setState({boardTilesRow2: newChildArray});
+            }
+            
+            else if(i == 2){
+                this.setState({boardTilesRow3: newChildArray});
+            }
+            
+            else if(i == 3){
+                this.setState({boardTilesRow4: newChildArray});
+            }
+            
+            else if(i == 4){
+                this.setState({boardTilesRow5: newChildArray});
+            }
+            
+            else if(i == 5){
+                this.setState({boardTilesRow6: newChildArray});
+            }
+            
+            else if(i == 6){
+                this.setState({boardTilesRow7: newChildArray});
+            }
+            
+            else {
+                this.setState({boardTilesRow8: newChildArray});
+            }
+        
+        }
+        
+    };
+    
+    /*This function fills a row specifically to show the player what number each column is
+    */
+    fillColumnNumber = () => {
+        return(
+            <View style={styles.columnDefineRow}>
+                {this.state.numberArrayColumn.map((myNum) => (
+                    <View style={styles.tile}>
+                        <Text style={styles.text}>
+                            {myNum.num}
+                        </Text>
+                    </View>
+                ))}
+            </View>
+        )
+    };
+    
+    fillRowNumber = () => {
+        return(
+            <View style={styles.rowDefineColumn}>
+                {this.state.numberArrayRow.map((myNum) => (
+                    <View style= {styles.tile}>
+                        <Text style={styles.text}>
+                            {myNum.num}
+                        </Text>
+                    </View>
+                ))}
+            </View>
+        )
+    }
+    
+    /*
+        This plays an audio clip.
+        
+        Sound does not work on CodeHS.
+    */
+
+    _handlePlaySoundAsync = async () => {
+        await Audio.setIsEnabledAsync(true);
+        let sound = new Audio.Sound();
+        await sound.loadAsync({
+            uri: 'https://codehs.com/uploads/f05fee85f02a5020706ea6c756e68a27',
+        });
+        await sound.playAsync();
+    };
+
+    render() {
+        return (
+
+            <View style={styles.container}>
+
+                <View style = {{display: this.state.pageStore[0]}}>
+                    <ImageBackground
+                        style={styles.introImageBackground}
+                        source={{ uri: 'https://codehs.com/uploads/e87cdff6d91b0f17474ebd8b233399d5' }}
+                    >
+                        <View style = {styles.introContainer}>
+                        
+                            <Text style = {styles.introTitleText}>  
+                                Chesskers!
+                            </Text>
+                            
+                            <View style = {styles.rulesContainer}>
+                            
+                                <Text style = {styles.rulesTitleText}>  
+                                    Rules
+                                </Text>
+                                
+                                <Text style = {styles.rulesText}>  
+                                    Move your respective pieces to the other side for them to become kings! 
+                                </Text>
+                                
+                                <Text style = {styles.rulesText}>  
+                                    The player who captures all the other player's pieces wins! 
+                                </Text>
+                                
+                                <Text style={styles.rulesText}>
+                                    Press the Info button in-game for more information!
+                                </Text>
+                            </View>
+                            
+                            <View style = {styles.buttonContainer}>
+                                <TouchableHighlight style = {styles.transitionScreenButton}
+                                    underlayColor = "transparent"
+                                    onPress={() => this.displayPage(1)}
+                                >
+                                    <Text style = {styles.transitionScreenButtonText}>
+                                        Start Game
+                                    </Text>
+                                </TouchableHighlight>
+                            </View>
+                            
+                        </View>    
+                        
+                    </ImageBackground>
+                        
+                    
+                </View>
+
+                <View style = {{display: this.state.pageStore[1]}}>
+                    
+                    {this.turnContainColorChange()}
+                    
+                    {this.fillColumnNumber()}
+                    
+                    <View style = {styles.row}>
+                        
+                        <View>
+                            {this.fillRowNumber()} 
+                        </View>
+                        
+                        
+                        <View style={styles.checkerBoardContainer}>
+                            
+                            <View style={styles.row}>
+                                
+                                {this.state.boardTilesRow1.map((myBoard) => (
+                                                
+                                    <View style={[styles.tile, {backgroundColor: myBoard.color}]}>
+                                        {this.fillPieces(myBoard)}
+                                    </View>
+                                                
+                                ))}
+                                        
+                            </View>
+                                        
+                            <View style={styles.row}>
+                            
+                                {this.state.boardTilesRow2.map((myBoard) => (
+                                                
+                                    <View style={[styles.tile, {backgroundColor: myBoard.color}]}>
+                                        {this.fillPieces(myBoard)}
+                                    </View>
+                                                
+                                ))}
+                                        
+                            </View>
+                                        
+                            <View style={styles.row}>
+                            
+                                {this.state.boardTilesRow3.map((myBoard) => (
+                                    
+                                    <View style={[styles.tile, {backgroundColor: myBoard.color}]}>
+                                        {this.fillPieces(myBoard)}
+                                    </View>
+                                        
+                                ))}
+                            
+                            </View>
+                                        
+                            <View style={styles.row}>
+                                
+                                {this.state.boardTilesRow4.map((myBoard) => (
+                                                
+                                    <View style={[styles.tile, {backgroundColor: myBoard.color}]}>
+                                        {this.fillPieces(myBoard)}
+                                    </View>
+                                                
+                                ))}
+                                        
+                            </View>
+                                        
+                            <View style={styles.row}>
+                            
+                                {this.state.boardTilesRow5.map((myBoard) => (
+                                                
+                                    <View style={[styles.tile, {backgroundColor: myBoard.color}]}>
+                                        {this.fillPieces(myBoard)}
+                                    </View>
+                                                
+                                ))}
+                                        
+                            </View>
+                                        
+                            <View style={styles.row}>
+                            
+                                {this.state.boardTilesRow6.map((myBoard) => (
+                                                
+                                    <View style={[styles.tile, {backgroundColor: myBoard.color}]}>
+                                        {this.fillPieces(myBoard)}
+                                    </View>
+                                                
+                                ))}
+                                        
+                            </View>
+                                        
+                            <View style={styles.row}>
+                            
+                                {this.state.boardTilesRow7.map((myBoard) => (
+                                                
+                                    <View style={[styles.tile, {backgroundColor: myBoard.color}]}>
+                                        {this.fillPieces(myBoard)}
+                                    </View>
+                                                
+                                ))}
+                                        
+                            </View>
+                                        
+                            <View style={styles.row}>
+    
+                                {this.state.boardTilesRow8.map((myBoard) => (
+                                                
+                                    <View style={[styles.tile, {backgroundColor: myBoard.color}]}>
+                                        {this.fillPieces(myBoard)}
+                                    </View>
+                                                
+                                ))}
+                                        
+                            </View>
+                        </View>    
+                        
+                    </View>
+                    
+                    <View style={styles.selectContainer}>
+                    
+                            <View style={styles.textBox}>
+                                
+                                <View style={styles.inputBox}>
+                                    
+                                    <Text style={styles.text}>
+                                        Select Row #:
+                                    </Text>
+                                    <TextInput
+                                        value={this.state.selectRow}
+                                        clearTextOnFocus = 'true'
+                                        keyboardType = 'numeric'
+                                        multiline = {true}
+                                        maxLength={1} 
+                                        onChangeText={(selectRow) => this.setState({selectRow})}
+                                        style={styles.rowColSelect}
+                                    />
+                                </View>
+                                <View style={styles.inputBox}>
+                                    <Text style={styles.text}>
+                                        Select Column #:
+                                    </Text>
+                                    <TextInput
+                                        value={this.state.selectCol}
+                                        clearTextOnFocus = 'true'
+                                        keyboardType = 'numeric'
+                                        multiline = {true}
+                                        maxLength={1}  
+                                        onChangeText={(selectCol) => this.setState({selectCol})}
+                                        style={styles.rowColSelect}
+                                    />
+                                </View>
+                            </View>
+                            
+                            <View style={styles.submitButtonContainer}>
+                                <TouchableHighlight style={styles.button}
+                                    underlayColor = 'transparent'
+                                    onPress={() => this.movePiece()}
+                                >
+                                    <Text style={styles.text}>
+                                        Submit
+                                    </Text>
+                                </TouchableHighlight>
+                                
+                                <TouchableHighlight style={styles.button}
+                                    underlayColor = 'transparent'
+                                    onPress ={() => this.displayPage(2)}
+                                >
+                                    <Text style={styles.text}>
+                                        Info
+                                    </Text>
+                                </TouchableHighlight>
+                            </View>
+                            
+                        
+                    </View>
+                    
+                    
+                </View>
+                
+                <View style = {{display: this.state.pageStore[2]}}>
+                    
+                    {this.turnContainColorChange()}
+                    
+                    <View style={styles.scoreBoardContainer}>
+                    
+                        {this.state.playerArray.map((myPlayer, index) => (
+                            
+                                <View style={styles.textBox}>
+                                    <TextInput style={styles.text}
+                                        multiline = {true}
+                                        onChangeText={(newName) => this.updateName(index, newName)}
+                                        value={myPlayer.playerName}
+                                    />
+                                    
+                                    <Text style={styles.text}>
+                                        # of Pieces Captured: {myPlayer.numPiecesCaptured}
+                                    </Text>
+                                    
+                                    <Text style={styles.text}>
+                                        # of Kings: {myPlayer.numKings}
+                                    </Text>
+                                </View>
+                        ))}
+                    </View>
+                    <ImageBackground
+                        style={styles.imgBackground}
+                        source={{ uri: 'https://codehs.com/uploads/c2318241ea7931200dfc6b05f5d7aac1' }}
+                    >
+                        <TouchableHighlight style={styles.returnButton}
+                            underlayColor = 'transparent'
+                            onPress={() => this.displayPage(1)}
+                        >
+                            <Text style={styles.text}>
+                                Return
+                            </Text>
+                        </TouchableHighlight>
+                        <TouchableHighlight style={styles.returnButton}
+                            underlayColor = 'transparent'
+                            onPress={() => this.displayPage(3)}
+                        >
+                            <Text style={styles.text}>
+                                Info
+                            </Text>
+                        </TouchableHighlight>
+                    </ImageBackground>
+                </View>
+                
+                <View style = {{display: this.state.pageStore[3]}}>
+                    <ImageBackground
+                        style={styles.introImageBackground}
+                        source={{ uri: 'https://codehs.com/uploads/e87cdff6d91b0f17474ebd8b233399d5' }}
+                    >
+                        <View style={styles.introContainer}>
+                            <Text style={styles.moreRulesText}>
+                                More Info:
+                            </Text>
+                            <Text style={styles.moreRulesText}>
+                                Welcome to Chesskers!
+                            </Text>
+                            <Text style={styles.moreRulesText}>
+                                Rules:
+                            </Text>
+                            <Text style={styles.moreRulesText}>
+                                Each player starts with 12 pieces and each player
+                                moves by clicking on their piece of choice and
+                                type their locations of choice.
+                            </Text>
+                            <Text style={styles.moreRulesText}>
+                                When Player's pieces reaches the opposite side of the
+                                board, their piece turns into a king!
+                            </Text>
+                            <Text style={styles.moreRulesText}>
+                                Eliminations:
+                            </Text>
+                            <Text style={styles.moreRulesText}>
+                                Removing an enemy piece will result in your
+                                checker to land on the location of your opponent's ('chess-kers')
+                            </Text>
+                            <Text style={styles.moreRulesText}>
+                                Press the button to return to the main screen
+                            </Text>
+                            
+                            <View style = {styles.buttonContainer}>
+                                <TouchableHighlight style = {styles.backContainer}
+                                    underlayColor = "transparent"
+                                    onPress={() => this.displayPage(2)}
+                                >
+                                    <Text style = {styles.transitionScreenButtonText}>
+                                        Back
+                                    </Text>
+                                </TouchableHighlight>
+                                <TouchableHighlight style = {styles.backContainer}
+                                    underlayColor = "transparent"
+                                    onPress={() => this.displayPage(5)}
+                                >
+                                    <Text style = {styles.transitionScreenButtonText}>
+                                        More Info
+                                    </Text>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+                    </ImageBackground>
+                </View>
+                
+                <View style={{display: this.state.pageStore[4]}}>
+                    <View style= {[styles.scoreBoard, {backgroundColor: this.state.color}]}>
+                    {this.state.playerArray.map((myPlayer) => (
+                        <View style={styles.winTextBox}>
+                            <Text style={styles.winText}>
+                                {myPlayer.playerName}'s # of pieces captured: {myPlayer.numPiecesCaptured}
+                            </Text>
+                        </View>
+                    ))}
+                    </View>
+                    
+                    {this.checkWinner()}
+                    
+                    
+                    <ImageBackground
+                        style={styles.imgBackground}
+                        source={{ uri: 'https://codehs.com/uploads/292e010d1b5ce37c94595c59a97713a9' }}
+                    >
+                        <View style={styles.rulesContainer}>
+                            <View style = {styles.tContainer}>
+                            </View>
+                            <Text style={styles.winText}>
+                                Thanks for playing!
+                            </Text>
+                        </View>
+                    </ImageBackground>
+                </View>
+                
+                
+                <View style = {{display: this.state.pageStore[5]}}>
+                    <ImageBackground
+                        style={styles.introImageBackground}
+                        source={{ uri: 'https://codehs.com/uploads/e87cdff6d91b0f17474ebd8b233399d5' }}
+                    >
+                        <View style={styles.introContainer}>
+                            <Text style={styles.moreRulesText}>
+                                Tips:
+                            </Text>
+                            <Text style={styles.moreRulesText}>
+                                When you press on a checker, the orange tiles that
+                                appear represent where the checker can move.
+                            </Text>
+                            <Text style={styles.moreRulesText}>
+                                In contrast to the original game, you cannot double
+                                stack!
+                            </Text>
+                            <Text style={styles.moreRulesText}>
+                                Press the button to return to the 'More Info' screen
+                            </Text>
+                            
+                            <View style = {styles.buttonContainer}>
+                                <TouchableHighlight style = {styles.backContainer}
+                                    underlayColor = "transparent"
+                                    onPress={() => this.displayPage(3)}
+                                >
+                                    <Text style = {styles.transitionScreenButtonText}>
+                                        Back to Info Page
+                                    </Text>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+                    </ImageBackground>
+                </View>
+            </View>
+        );
+    }
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: 'Black',
+    },
+
+    introContainer: {
+        width: deviceWidth,
+        height: deviceHeight,
+        alignItems: 'center',
+        
+    },
+    selectCol: {
+      height: deviceHeight/20,  
+    },
+    turnContainer: {
+        borderWidth: 5,
+        borderColor: 'lightpurple',
+        backgroundColor: '#f677c1',
+        width: deviceWidth,
+        height: deviceHeight/10,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    
+    turnText: {
+        color: '#690074',
+        fontWeight: 'Bold',
+        fontSize: deviceHeight/16,    
+    },
+    
+    introImageBackground: {
+        width: deviceWidth,
+        height: deviceHeight,
+    },
+    
+    introTitleText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: deviceHeight/9,
+        textAlign: 'center',
+        marginBottom: 14,
+        
+    },
+    
+    rulesContainer: {
+        width: deviceWidth,
+        height: 2*(deviceHeight/3),
+        
+    },
+    
+    tContainer: {
+        width: deviceWidth,
+        height: deviceHeight/3,
+    },
+    
+    rulesTitleText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: deviceHeight/14,
+        textAlign: 'center',
+        textDecorationLine: 'underline',
+        marginBottom: 5,
+    },
+    
+    rulesText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: deviceHeight/20,
+        textAlign: 'center',
+    },
+    
+    moreRulesText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: deviceHeight/25,
+        textAlign: 'center',
+    },
+    
+    buttonContainer: {
+        width: deviceWidth,
+        height: (deviceHeight/6),
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+    },
+    
+    submitButtonContainer: {
+        width: deviceWidth,
+        height: (deviceHeight/9),
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        backgroundColor: '#690074',
+    },
+    
+    transitionScreenButton: {
+        borderWidth: 5,
+        borderColor: 'black',
+        backgroundColor: 'white',
+        width: deviceWidth/2,
+        height: (deviceHeight/8),
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    
+    transitionScreenButtonText: {
+        fontWeight: 'bold',
+        fontSize: deviceHeight/30,
+        textAlign: 'center',    
+    },
+
+    row: {
+        flexDirection: 'row',
+    },
+    
+    column: {
+        flexDirection: 'column',  
+    },
+    
+    tile: {
+        backgroundColor: 'black',
+        width: deviceWidth/9,
+        height: deviceWidth/9,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    
+    pieces: {
+        height: deviceWidth/9,
+        width: deviceWidth/9,
+    },
+    
+    pieces2: {
+       height: deviceWidth/9,
+       width: deviceWidth/9,
+    },
+    
+    checkerBoardContainer: {
+        width: deviceWidth,
+        height: deviceWidth/3,
+    },
+    
+    scoreBoardContainer: {
+        height: deviceHeight/3,
+        width: deviceWidth,
+        borderWidth: 5,
+        borderColor: 'lightPurple',
+        backgroundColor: '#690074',
+    },
+    
+    textBox: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderColor: '#9b3284',
+        borderWidth: deviceHeight/200,
+    },
+    
+    text: {
+	    color: '#f1e290',
+        fontSize: deviceHeight/24,
+        textAlign: 'center',
+	},
+	
+	inputBox:{
+	    width: deviceWidth,
+	    height: deviceHeight/25,
+	    flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#9b3284'
+	},
+	
+	rowColSelect: {
+	    color: '#f1e290',
+	    width: deviceWidth/10,
+        fontSize: deviceHeight/24,
+        textAlign: 'center',
+        paddingTop: deviceHeight/20,
+	},
+	
+	button: {
+	    paddingLeft: deviceHeight/20,
+	    paddingRight: deviceHeight/20,
+	    paddingBottom: deviceHeight/40,
+	},
+	
+	returnButton: {
+	    borderWidth: deviceWidth/150,
+	    borderColor: '#f1e290',
+	    height: deviceHeight/6,
+	    width: deviceWidth/2,
+	    backgroundColor: '#690074',
+	    justifyContent: 'center',
+	    alignItem: 'center',
+	    marginRight: 10,
+	},
+	
+	selectContainer: {
+        height: deviceHeight/3,
+        width: deviceWidth,
+        borderWidth: 5,
+        borderColor: 'lightPurple',
+        backgroundColor: '#ccccea',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    
+    backContainer: {
+        borderWidth: 5,
+        borderColor: 'lightGrey',
+        backgroundColor: 'white',
+        width: deviceWidth/3,
+        height: (deviceHeight/10),
+        alignItems: 'center',
+        justifyContent: 'center', 
+    },
+    
+    scoreBoard: {
+        height: 2*(deviceHeight/9),
+        backgroundColor: '#663399',
+    },
+    
+    winText: {
+        fontSize: deviceHeight/27,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: 'white'
+    },
+    
+    winTextBox: {
+        height: deviceHeight/9,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#663399',
+    },
+    
+    imgBackground: {
+        height: 2*(deviceHeight/3),
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+    },
+    columnDefineRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    
+    rowDefineColumn: {
+       flexDirection: 'column',
+       alignItems: 'center',
+       justifyContent: 'center',
+   },
+  
+});
